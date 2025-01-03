@@ -216,7 +216,7 @@ void SearchIndex::searchRecursive(
 }
 
 std::multiset<SearchResult> SearchIndex::createScoredResults(
-	const std::vector<SearchPath>& paths, NodeTypeSet acceptedNodeTypes, size_t maxResultCount) 
+	const std::vector<SearchPath>& paths, NodeTypeSet acceptedNodeTypes, size_t maxResultCount)
 {
 	// score and order initial paths
 	std::multimap<int, SearchPath, std::greater<int>> scoredPaths;
@@ -456,6 +456,10 @@ int SearchIndex::scoreText(const std::wstring& text, const std::vector<size_t>& 
 		{
 			firstLetterScore += firstLetterBonus;
 		}
+        // Avoid crashes caused by index overflow
+        else if (index >= text.size() || index >= text.size() - 1) {
+            continue;
+        }
 		// after no letter
 		else if (index != 0 && isNoLetter(text[index - 1]))
 		{
